@@ -120,7 +120,7 @@ const EmployeeDashboard = ({ setIsLoggedIn }) => {
         return `${hours || 0}:${(minutes || 0).toString().padStart(2, '0')}`;
     };
     const handleSubmit = async () => {
-        if (!days[currentDate]?.timeIn && !days[currentDate]?.timeOut && !days[currentDate]?.hours) {
+        if (!days[currentDate]?.timeIn && !days[currentDate]?.timeOut && !days[currentDate]?.hours && !file) {
             toast.error('At least one field is required', { position: "top-center" });
             return;
         }
