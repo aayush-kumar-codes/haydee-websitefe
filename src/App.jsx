@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
 import UserDetailScreen from './screens/UserDetailsScreen';
 import UserWeeklySummaries from './screens/UserWeeklySummaries';
 import ManagerDashboardScreen from './screens/ManagerDashbaordScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import EmployeeDashboard from './screens/EmployeeDashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -20,74 +22,86 @@ function App() {
     };
 
     checkAuth();
+
+    // Add event listener for storage changes
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
 
+  const AuthWrapper = ({ children }) => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      if (!isLoading) {
+        const currentPath = window.location.pathname;
+        // Skip redirection for login and register routes
+        if (!isLoggedIn && currentPath !== '/login' && currentPath !== '/register') {
+          navigate('/login');
+        } else if (isLoggedIn && currentPath === '/') {
+          navigate('/dashboard');
+        }
+      }
+    }, [isLoggedIn, isLoading, navigate]);
+
+    if (isLoading) {
+      return (
+        <div className="d-flex justify-content-center align-items-center vh-100">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
+    }
+
+    return children;
+  };
   return (
     <Router>
-      <Routes>
-        {isLoggedIn ? (
-          role === 'manager' ? (
+      <AuthWrapper>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={
+            !isLoggedIn ? (
+              <LoginScreen setIsLoggedIn={setIsLoggedIn} setRole={setRole} />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
+          } />
+
+          <Route path="/register" element={
+            !isLoggedIn ? (
+              <RegisterScreen setIsLoggedIn={setIsLoggedIn} setRole={setRole} />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
+          } />
+
+          {/* Protected routes */}
+          {isLoggedIn && (
             <>
-              <Route
-                path="/dashboard"
-                element={
-                  <ManagerDashboardScreen
-                    setIsLoggedIn={setIsLoggedIn}
-                  />
-                }
-              />
-              <Route
-                path="/user/:userId"
-                element={
-                  <UserDetailScreen
-                    setIsLoggedIn={setIsLoggedIn}
-                  />
-                }
-              />
-              <Route
-                path="/weekly-summaries/:weekId"
-                element={
-                  <UserWeeklySummaries
-                    setIsLoggedIn={setIsLoggedIn}
-                  />
-                }
-              />
-              <Route
-                path="*"
-                element={<Navigate to="/dashboard" replace />}
-              />
+              {role === 'manager' ? (
+                <>
+                  <Route path="/dashboard" element={<ManagerDashboardScreen setIsLoggedIn={setIsLoggedIn} />} />
+                  <Route path="/user/:userId" element={<UserDetailScreen setIsLoggedIn={setIsLoggedIn} />} />
+                  <Route path="/weekly-summaries/:weekId" element={<UserWeeklySummaries setIsLoggedIn={setIsLoggedIn} />} />
+                </>
+              ) : (
+                <Route path="/dashboard" element={<EmployeeDashboard setIsLoggedIn={setIsLoggedIn} />} />
+              )}
             </>
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        ) : (
-          <>
-            <Route
-              path="/login"
-              element={
-                <LoginScreen
-                  setIsLoggedIn={setIsLoggedIn}
-                  setRole={setRole}
-                />
-              }
-            />
-            <Route
-              path="*"
-              element={<Navigate to="/login" replace />}
-            />
-          </>
-        )}
-      </Routes>
+          )}
+
+          {/* Fallback routes */}
+          <Route path="*" element={
+            isLoggedIn ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          } />
+        </Routes>
+      </AuthWrapper>
     </Router>
   );
 }

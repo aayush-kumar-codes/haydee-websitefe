@@ -168,18 +168,13 @@ const UserWeeklySummaries = ({ setIsLoggedIn }) => {
                                                 <span className="text-sm font-medium">{day.total_hours || 'N/A'}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-sm font-medium text-gray-500">Status</span>
+                                                <span className="text-sm font-medium text-gray-500">AI VAlidation Status</span>
                                                 <span className={`text-sm font-medium ${day.status === 'missing' ? 'text-red-500' : 'text-green-500'
                                                     }`}>
                                                     {day.status || 'N/A'}
                                                 </span>
                                             </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-sm font-medium text-gray-500">Validation</span>
-                                                <span className="text-sm font-medium">
-                                                    {day.validation_info_status || 'N/A'}
-                                                </span>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>

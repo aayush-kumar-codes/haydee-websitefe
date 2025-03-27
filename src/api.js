@@ -9,7 +9,7 @@ const api = {
                 username_or_email,
                 password,
             };
-            const response = await axios.post(`${API_URL}/auth/manager/login`, payload, {
+            const response = await axios.post(`${API_URL}/auth/login`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -21,7 +21,26 @@ const api = {
             return { success: false, message: error?.response?.data?.detail };
         }
     },
-
+    register: async (username, email, password, fullName) => {
+        try {
+            const payload = {
+                username,
+                email,
+                password,
+                full_name: fullName,
+            };
+            const response = await axios.post(`${API_URL}/auth/register`, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+            });
+            return { success: true, data: response?.data };
+        } catch (error) {
+            console.log('Register Error:', error?.response?.data?.detail);
+            return { success: false, message: error?.response?.data?.detail };
+        }
+    },
 
     getUsers: async (accessToken) => {
         try {
@@ -75,7 +94,35 @@ const api = {
     },
 
 };
+export const uploadTimesheet = async (formData, accessToken) => {
+    try {
+        const response = await axios.post(`${API_URL}/timesheet/validate`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${accessToken}`
+            },
+        });
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.log('Error uploading timesheet:', error.response?.data?.detail || error.message);
+        return { success: false, message: error?.response?.data?.detail, status: error?.response?.status };
+    }
+};
 
+export const saveDraftTimesheet = async (formData, accessToken) => {
+    try {
+        const response = await axios.post(`${API_URL}/timesheet/draft`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${accessToken}`
+            },
+        });
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.log('Error uploading timesheet:', error.response?.data?.detail || error.message);
+        return { success: false, message: error?.response?.data?.detail, status: error?.response?.status };
+    }
+};
 
 
 export default api;

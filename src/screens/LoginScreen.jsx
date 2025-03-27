@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-
+import { toast } from 'react-toastify';
 import api from '../api';
 import logo from "../assets/Logo.png";
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 
 const LoginScreen = ({ setIsLoggedIn, setRole }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false); // New state for password visibility
     const navigate = useNavigate();
 
     const validateInputs = () => {
@@ -16,11 +17,6 @@ const LoginScreen = ({ setIsLoggedIn, setRole }) => {
             toast.error('All fields are required!', {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
             });
             return false;
         }
@@ -38,11 +34,6 @@ const LoginScreen = ({ setIsLoggedIn, setRole }) => {
                 toast.success('Logged in successfully!', {
                     position: "top-center",
                     autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
                 });
                 localStorage.setItem('userToken', response?.data?.access_token);
                 localStorage.setItem('role', response?.data?.user_data?.role);
@@ -50,32 +41,33 @@ const LoginScreen = ({ setIsLoggedIn, setRole }) => {
                 setIsLoggedIn(true);
                 setEmail('');
                 setPassword('');
-                // Optional: Redirect after successful login
                 setTimeout(() => navigate('/dashboard'), 2000);
             } else {
                 toast.error(response.message || 'Login failed', {
                     position: "top-center",
                     autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
                 });
             }
         } catch (error) {
+            console.log(error, "--");
             toast.error('Something went wrong. Please try again.', {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
             });
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleForgotPassword = () => {
+        toast.info('Password reset feature coming soon!', {
+            position: "top-center",
+            autoClose: 3000,
+        });
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
     return (
@@ -104,18 +96,31 @@ const LoginScreen = ({ setIsLoggedIn, setRole }) => {
                         />
                     </div>
 
-                    <div>
+                    <div className="relative">
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                             Password
                         </label>
-                        <input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={togglePasswordVisibility}
+                                className="absolute inset-y-0 right-0 flex items-center pr-3 mt-1 text-gray-500 hover:text-gray-700"
+                            >
+                                {showPassword ? (
+                                    <FaEyeSlash className="h-5 w-5" />
+                                ) : (
+                                    <FaEye className="h-5 w-5" />
+                                )}
+                            </button>
+                        </div>
                     </div>
 
                     <button
@@ -134,6 +139,21 @@ const LoginScreen = ({ setIsLoggedIn, setRole }) => {
                         ) : 'Login'}
                     </button>
                 </form>
+
+                <div className="flex justify-between text-sm">
+                    <button
+                        onClick={() => navigate('/register')}
+                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                        Create Account
+                    </button>
+                    <button
+                        onClick={handleForgotPassword}
+                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                        Forgot Password?
+                    </button>
+                </div>
             </div>
         </div>
     );

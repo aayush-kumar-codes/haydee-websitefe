@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import api from '../api';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import Logo from "../assets/Logo.png";
 
 const ManagerDashboardScreen = ({ setIsLoggedIn }) => {
     const [users, setUsers] = useState([]);
@@ -151,6 +152,7 @@ const ManagerDashboardScreen = ({ setIsLoggedIn }) => {
     };
 
     const performExport = () => {
+        d
         const dataToExport = exportData.map(user => ({
             "Date Submitted": user?.date_submitted || "N.A",
             "Name": user?.name || "N.A",
@@ -220,7 +222,11 @@ const ManagerDashboardScreen = ({ setIsLoggedIn }) => {
             {/* Header */}
             <header className="bg-white shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Manager Dashboard</h1>
+                    <div className="flex items-center space-x-4">
+                        <img src={Logo} alt="Logo" className="h-10" />
+                        <h1 className="text-2xl font-bold text-gray-900">Manager Dashboard</h1>
+
+                    </div>
                     <button
                         onClick={handleLogout}
                         className="flex items-center text-red-600 hover:text-red-800"
