@@ -169,9 +169,16 @@ const UserWeeklySummaries = ({ setIsLoggedIn }) => {
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-sm font-medium text-gray-500">AI VAlidation Status</span>
-                                                <span className={`text-sm font-medium ${day.status === 'missing' ? 'text-red-500' : 'text-green-500'
+                                                <span className={`text-sm font-medium ${day?.ai_validation_info?.status === 'missing from image' ? 'text-red-500' : 'text-green-500'
                                                     }`}>
-                                                    {day.status || 'N/A'}
+                                                    {day?.ai_validation_info?.status || 'N/A'}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex justify-around gap-10">
+                                                <span className="text-sm font-medium text-gray-500">Reason</span>
+                                                <span className={`text-sm font-medium`}>
+                                                    {day?.ai_validation_info?.reason || 'N/A'}
                                                 </span>
                                             </div>
 
