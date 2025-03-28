@@ -20,10 +20,11 @@ const EmployeeDashboard = ({ setIsLoggedIn }) => {
     const [file, setFile] = useState(null);
     const navigate = useNavigate();
 
+    
     // Generate time slots (30-minute intervals from 8 AM to 8 PM)
     const generateTimeSlots = () => {
         const slots = [];
-        for (let hour = 8; hour <= 20; hour++) {
+        for (let hour = 0; hour < 24; hour++) {
             for (let minute = 0; minute < 60; minute += 10) {
                 const period = hour >= 12 ? 'PM' : 'AM';
                 const displayHour = hour % 12 || 12;
@@ -359,7 +360,7 @@ const EmployeeDashboard = ({ setIsLoggedIn }) => {
                                 ) : 'Save as Draft'}
                             </button>
 
-                            {isWeekendSubmission && (
+                           {/* {isWeekendSubmission && ( */}
                                 <button
                                     onClick={handleSubmit}
                                     disabled={loading}
@@ -375,7 +376,7 @@ const EmployeeDashboard = ({ setIsLoggedIn }) => {
                                         </span>
                                     ) : 'Submit Timesheet'}
                                 </button>
-                            )}
+                             {/* )} */}
                         </div>
                     </div>
                 </div>

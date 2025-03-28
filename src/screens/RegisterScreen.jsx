@@ -56,9 +56,9 @@ const RegisterScreen = () => {
         e.preventDefault();
         if (!validateInputs()) return;
         setLoading(true);
-
+        const formattedEmail = email.toLowerCase().trim();
         try {
-            const response = await api.register(username, email, password, fullName);
+            const response = await api.register(username, formattedEmail, password, fullName);
             if (response.success) {
                 toast.success('Registration Successful! Please login.', {
                     position: "top-center",

@@ -28,8 +28,11 @@ const LoginScreen = ({ setIsLoggedIn, setRole }) => {
         if (!validateInputs()) return;
         setLoading(true);
 
+         // Convert email to lowercase before sending
+    const formattedEmail = email.toLowerCase().trim();
+
         try {
-            const response = await api.login(email, password);
+            const response = await api.login(formattedEmail, password);
             if (response.success) {
                 toast.success('Logged in successfully!', {
                     position: "top-center",
